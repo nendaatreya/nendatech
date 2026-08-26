@@ -1,97 +1,553 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NexusTech — Modern IT Solutions</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      overflow: hidden;
-      background-color: #0f172a;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    #canvas-container {
-      width: 100vw;
-      height: 100vh;
-      display: block;
-    }
-    .overlay {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-      color: #ffffff;
-      pointer-events: none;
-      user-select: none;
-    }
-    .overlay h1 {
-      font-size: 3rem;
-      font-weight: 700;
-      letter-spacing: 2px;
-      margin-bottom: 0.5rem;
-      background: linear-gradient(to right, #38bdf8, #818cf8);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .overlay p {
-      font-size: 1.2rem;
-      color: #94a3b8;
-    }
-  </style>
-  <!-- Library Three.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusTech — Platform Solusi Digital Interaktif</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .dark .glass {
+            background: rgba(15, 23, 42, 0.75);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
 </head>
-<body>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col">
 
-  <div class="overlay">
-    <h1>NEXUSTECH</h1>
-    <p>Modern IT Solutions & Tech Startup</p>
-  </div>
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-20 right-5 z-50 flex flex-col gap-3"></div>
 
-  <div id="canvas-container"></div>
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-40 w-full glass border-b border-slate-200/50 dark:border-slate-800/50 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/30 group-hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-cube text-xl"></i>
+                </div>
+                <span class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Nexus<span class="text-blue-600">Tech</span></span>
+            </a>
 
-  <script>
-    // 1. Scene & Setup
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+            <!-- Desktop Navigation -->
+            <nav class="hidden md:flex items-center gap-8 font-medium text-sm text-slate-600 dark:text-slate-300">
+                <a href="#hero" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Beranda</a>
+                <a href="#features" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Fitur</a>
+                <a href="#calculator" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Kalkulator Estimasi</a>
+                <a href="#portfolio" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Portofolio</a>
+                <a href="#testimonials" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Testimoni</a>
+                <a href="#contact" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Kontak</a>
+            </nav>
 
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    document.getElementById('canvas-container').appendChild(renderer.domElement);
+            <!-- Actions & Theme Toggle -->
+            <div class="flex items-center gap-4">
+                <button id="theme-toggle" class="p-2.5 rounded-xl bg-slate-200/60 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all focus:outline-none" aria-label="Toggle Theme">
+                    <i id="theme-toggle-dark-icon" class="fa-solid fa-moon text-lg hidden"></i>
+                    <i id="theme-toggle-light-icon" class="fa-solid fa-sun text-lg hidden"></i>
+                </button>
+                <a href="#contact" class="hidden sm:inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-xl shadow-lg shadow-blue-500/25 transition-all">
+                    Mulai Sekarang
+                </a>
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
 
-    // 2. Objek 3D (Futuristic Cube Wireframe)
-    const geometry = new THREE.BoxGeometry(2.5, 2.5, 2.5);
-    const material = new THREE.MeshBasicMaterial({ 
-      color: 0x38bdf8, 
-      wireframe: true 
-    });
-    const cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 pt-2 pb-6 space-y-3">
+            <a href="#hero" class="block py-2 text-slate-700 dark:text-slate-200 font-medium">Beranda</a>
+            <a href="#features" class="block py-2 text-slate-700 dark:text-slate-200 font-medium">Fitur</a>
+            <a href="#calculator" class="block py-2 text-slate-700 dark:text-slate-200 font-medium">Kalkulator Estimasi</a>
+            <a href="#portfolio" class="block py-2 text-slate-700 dark:text-slate-200 font-medium">Portofolio</a>
+            <a href="#testimonials" class="block py-2 text-slate-700 dark:text-slate-200 font-medium">Testimoni</a>
+            <a href="#contact" class="block py-2 text-slate-700 dark:text-slate-200 font-medium">Kontak</a>
+        </div>
+    </header>
 
-    camera.position.z = 5;
+    <main class="flex-grow">
+        <!-- Hero Section -->
+        <section id="hero" class="relative overflow-hidden pt-12 pb-20 md:pt-24 md:pb-32">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400 text-xs sm:text-sm font-semibold mb-8 animate-bounce">
+                    <span class="flex h-2 w-2 rounded-full bg-blue-600"></span>
+                    Siap Di-Deploy ke Netlify dalam 1-Klik
+                </div>
+                <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white max-w-4xl mx-auto leading-tight">
+                    Bangun Pengalaman Digital Interaktif <span class="gradient-text">Masa Depan</span>
+                </h1>
+                <p class="mt-6 text-lg sm:text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto font-normal">
+                    Template website interaktif berbasis HTML5 & Tailwind CSS. Dilengkapi kalkulator real-time, efek responsif modern, dan filter portofolio instan.
+                </p>
+                <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <a href="#calculator" class="w-full sm:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-xl shadow-blue-500/25 transition-all transform hover:-translate-y-0.5">
+                        Coba Kalkulator Interaktif <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </a>
+                    <a href="#portfolio" class="w-full sm:w-auto px-8 py-4 bg-slate-200/80 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-semibold rounded-xl transition-all">
+                        Lihat Showcase
+                    </a>
+                </div>
+            </div>
+        </section>
 
-    // 3. Loop Animasi
-    function animate() {
-      requestAnimationFrame(animate);
-      cube.rotation.x += 0.005;
-      cube.rotation.y += 0.01;
-      renderer.render(scene, camera);
-    }
-    animate();
+        <!-- Features Section -->
+        <section id="features" class="py-20 bg-slate-100/60 dark:bg-slate-800/40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="text-3xl font-bold text-slate-900 dark:text-white">Fitur Keunggulan Utama</h2>
+                    <p class="mt-4 text-slate-600 dark:text-slate-400">Semua yang Anda butuhkan untuk membuat landing page interaktif tingkat profesional.</p>
+                </div>
 
-    // 4. Layar Responsif
-    window.addEventListener('resize', () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-  </script>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Feature 1 -->
+                    <div class="p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all group">
+                        <div class="w-14 h-14 rounded-xl bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Performa Ultra Cepat</h3>
+                        <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Tanpa build-step yang rumit. Menggunakan standar HTML & Tailwind CDN yang dimuat sangat cepat di CDN Netlify.</p>
+                    </div>
+                    <!-- Feature 2 -->
+                    <div class="p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all group">
+                        <div class="w-14 h-14 rounded-xl bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-sliders"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Elemen Interaktif Live</h3>
+                        <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Dilengkapi dengan komponen JavaScript murni seperti kalkulator biaya, galeri terfilter, dan sistem notifikasi toast.</p>
+                    </div>
+                    <!-- Feature 3 -->
+                    <div class="p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all group">
+                        <div class="w-14 h-14 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-moon"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Mode Gelap Otomatis</h3>
+                        <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Mendukung saklar tema terang/gelap yang tersimpan secara lokal di browser pengunjung (*Local Storage*).</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Calculator Section -->
+        <section id="calculator" class="py-20">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-2xl mx-auto mb-12">
+                    <span class="text-blue-600 dark:text-blue-400 font-semibold text-sm tracking-wider uppercase">Fitur Interaktif</span>
+                    <h2 class="text-3xl font-bold text-slate-900 dark:text-white mt-2">Kalkulator Estimasi Biaya Proyek</h2>
+                    <p class="mt-3 text-slate-600 dark:text-slate-400">Geser slider di bawah untuk menghitung perkiraan estimasi anggaran pengembangan proyek Anda.</p>
+                </div>
+
+                <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-10 border border-slate-200/80 dark:border-slate-700/60 shadow-xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <!-- Sliders Side -->
+                    <div class="lg:col-span-7 space-y-8">
+                        <!-- Slider 1: Halaman -->
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <label for="range-pages" class="font-semibold text-slate-700 dark:text-slate-200">Jumlah Halaman Web</label>
+                                <span id="val-pages" class="font-bold text-blue-600 dark:text-blue-400 text-lg">5 Halaman</span>
+                            </div>
+                            <input id="range-pages" type="range" min="1" max="20" value="5" class="w-full h-2.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                        </div>
+
+                        <!-- Slider 2: Fitur Khusus -->
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <label for="range-features" class="font-semibold text-slate-700 dark:text-slate-200">Jumlah Fitur Kompleks (API / Auth / Payment)</label>
+                                <span id="val-features" class="font-bold text-blue-600 dark:text-blue-400 text-lg">2 Fitur</span>
+                            </div>
+                            <input id="range-features" type="range" min="0" max="10" value="2" class="w-full h-2.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                        </div>
+
+                        <!-- Checkboxes / Options -->
+                        <div class="space-y-3 pt-2">
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input id="chk-seo" type="checkbox" class="w-5 h-5 rounded text-blue-600 focus:ring-blue-500 accent-blue-600" checked>
+                                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Optimasi SEO & Performa Tambahan (+Rp 1.000.000)</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input id="chk-express" type="checkbox" class="w-5 h-5 rounded text-blue-600 focus:ring-blue-500 accent-blue-600">
+                                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Pengerjaan Ekspres / Prioritas (+30%)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Result Display Side -->
+                    <div class="lg:col-span-5 bg-slate-900 text-white dark:bg-slate-950 p-8 rounded-2xl flex flex-col justify-between h-full text-center border border-slate-700">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Total Estimasi Invosi</span>
+                            <div id="total-price" class="text-4xl font-extrabold text-blue-400 my-4">Rp 4.500.000</div>
+                            <p class="text-xs text-slate-400">Estimasi waktu pengerjaan: <span id="estimated-time" class="font-bold text-slate-200">5-7 hari kerja</span></p>
+                        </div>
+                        <button onclick="requestQuote()" class="mt-8 w-full py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg transition-all active:scale-95">
+                            Kirim Estimasi ke WhatsApp
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Filterable Portfolio Gallery -->
+        <section id="portfolio" class="py-20 bg-slate-100/60 dark:bg-slate-800/40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-2xl mx-auto mb-10">
+                    <h2 class="text-3xl font-bold text-slate-900 dark:text-white">Showcase Proyek Interaktif</h2>
+                    <p class="mt-3 text-slate-600 dark:text-slate-400">Gunakan filter di bawah untuk melihat kategori karya kami.</p>
+
+                    <!-- Category Filter Buttons -->
+                    <div class="flex flex-wrap items-center justify-center gap-2 mt-8">
+                        <button onclick="filterPortfolio('all')" class="filter-btn active px-5 py-2 text-sm font-medium rounded-xl bg-blue-600 text-white transition-all">Semua</button>
+                        <button onclick="filterPortfolio('web')" class="filter-btn px-5 py-2 text-sm font-medium rounded-xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">Web App</button>
+                        <button onclick="filterPortfolio('ui')" class="filter-btn px-5 py-2 text-sm font-medium rounded-xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">UI/UX Design</button>
+                        <button onclick="filterPortfolio('mobile')" class="filter-btn px-5 py-2 text-sm font-medium rounded-xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">Mobile App</button>
+                    </div>
+                </div>
+
+                <!-- Portfolio Grid -->
+                <div id="portfolio-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Project 1 -->
+                    <div class="portfolio-item web p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/50 shadow-sm hover:shadow-xl transition-all">
+                        <div class="h-48 rounded-xl bg-gradient-to-tr from-blue-500 to-cyan-400 flex items-center justify-center text-white text-4xl mb-4">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </div>
+                        <span class="text-xs font-semibold px-3 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 rounded-full">Web App</span>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white mt-3">Analytics Dashboard Pro</h3>
+                        <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">Platform SaaS untuk pemantauan data statistik bisnis secara real-time.</p>
+                    </div>
+
+                    <!-- Project 2 -->
+                    <div class="portfolio-item ui p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/50 shadow-sm hover:shadow-xl transition-all">
+                        <div class="h-48 rounded-xl bg-gradient-to-tr from-purple-500 to-pink-500 flex items-center justify-center text-white text-4xl mb-4">
+                            <i class="fa-solid fa-pen-nib"></i>
+                        </div>
+                        <span class="text-xs font-semibold px-3 py-1 bg-purple-100 dark:bg-purple-900/50 text-purple-600 dark:text-purple-400 rounded-full">UI/UX Design</span>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white mt-3">Neobank Mobile Redesign</h3>
+                        <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">Konsep perancangan antarmuka aplikasi keuangan modern dan ramah pengguna.</p>
+                    </div>
+
+                    <!-- Project 3 -->
+                    <div class="portfolio-item mobile p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/50 shadow-sm hover:shadow-xl transition-all">
+                        <div class="h-48 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-white text-4xl mb-4">
+                            <i class="fa-solid fa-mobile-screen"></i>
+                        </div>
+                        <span class="text-xs font-semibold px-3 py-1 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 rounded-full">Mobile App</span>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white mt-3">FitLife Health Tracker</h3>
+                        <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">Aplikasi kebugaran dengan pelacak kalori harian dan panduan latihan.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Carousel -->
+        <section id="testimonials" class="py-20">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-12">Kata Klien Kami</h2>
+
+                <div class="relative bg-white dark:bg-slate-800 p-8 sm:p-12 rounded-3xl border border-slate-200/80 dark:border-slate-700/60 shadow-lg">
+                    <div id="testimonial-content" class="min-h-[140px] flex flex-col justify-center">
+                        <p id="testi-text" class="text-lg sm:text-xl text-slate-700 dark:text-slate-200 italic">"NexusTech membantu kami meluncurkan landing page produk hanya dalam waktu kurang dari 3 hari. Hasilnya sangat cepat dan mulus di Netlify!"</p>
+                        <div class="mt-6">
+                            <h4 id="testi-author" class="font-bold text-slate-900 dark:text-white">Budi Santoso</h4>
+                            <span id="testi-role" class="text-sm text-blue-600 dark:text-blue-400">CEO di TechStart</span>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Controls -->
+                    <div class="flex items-center justify-center gap-4 mt-8">
+                        <button onclick="prevTestimonial()" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+                        <div id="testi-dots" class="flex gap-2"></div>
+                        <button onclick="nextTestimonial()" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Contact Form Section -->
+        <section id="contact" class="py-20 bg-slate-100/60 dark:bg-slate-800/40">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="bg-white dark:bg-slate-800 p-8 sm:p-12 rounded-3xl border border-slate-200/80 dark:border-slate-700/60 shadow-xl">
+                    <div class="text-center max-w-xl mx-auto mb-10">
+                        <h2 class="text-3xl font-bold text-slate-900 dark:text-white">Hubungi Kami</h2>
+                        <p class="mt-2 text-slate-600 dark:text-slate-400">Kirimkan pesan Anda dan tim kami akan membalas dalam kurun 24 jam.</p>
+                    </div>
+
+                    <form id="contact-form" onsubmit="handleFormSubmit(event)" class="space-y-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Nama Lengkap</label>
+                                <input type="text" required placeholder="Masukkan nama Anda" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Alamat Email</label>
+                                <input type="email" required placeholder="nama@email.com" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Pesan Anda</label>
+                            <textarea rows="4" required placeholder="Tuliskan detail kebutuhan proyek Anda..." class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/25 transition-all">
+                            Kirim Pesan Sekarang <i class="fa-solid fa-paper-plane ml-2"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+            <div>
+                <a href="#" class="text-xl font-bold text-white">Nexus<span class="text-blue-500">Tech</span></a>
+                <p class="text-sm mt-1">Siap dipublikasikan secara gratis di Netlify Drop.</p>
+            </div>
+
+            <div class="flex items-center gap-6">
+                <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-github text-xl"></i></a>
+                <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-twitter text-xl"></i></a>
+                <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-linkedin text-xl"></i></a>
+            </div>
+
+            <p class="text-xs text-slate-500">&copy; 2026 NexusTech. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Embedded JavaScript Logic -->
+    <script>
+        // --- 1. Dark Mode Persistence ---
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const darkIcon = document.getElementById('theme-toggle-dark-icon');
+        const lightIcon = document.getElementById('theme-toggle-light-icon');
+
+        function initTheme() {
+            if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                lightIcon.classList.remove('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                darkIcon.classList.remove('hidden');
+            }
+        }
+
+        themeToggleBtn.addEventListener('click', function() {
+            darkIcon.classList.toggle('hidden');
+            lightIcon.classList.toggle('hidden');
+
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('color-theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('color-theme', 'dark');
+            }
+        });
+
+        initTheme();
+
+        // --- 2. Mobile Menu Toggle ---
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // --- 3. Interactive Calculator Logic ---
+        const rangePages = document.getElementById('range-pages');
+        const rangeFeatures = document.getElementById('range-features');
+        const valPages = document.getElementById('val-pages');
+        const valFeatures = document.getElementById('val-features');
+        const chkSeo = document.getElementById('chk-seo');
+        const chkExpress = document.getElementById('chk-express');
+        const totalPriceEl = document.getElementById('total-price');
+        const estimatedTimeEl = document.getElementById('estimated-time');
+
+        function updateCalculator() {
+            const pages = parseInt(rangePages.value);
+            const features = parseInt(rangeFeatures.value);
+
+            valPages.textContent = `${pages} Halaman`;
+            valFeatures.textContent = `${features} Fitur`;
+
+            // Base price calculation formula
+            let basePrice = (pages * 500000) + (features * 1000000);
+            if (chkSeo.checked) basePrice += 1000000;
+            if (chkExpress.checked) basePrice *= 1.30;
+
+            // Formatter to IDR Currency
+            const formattedPrice = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(basePrice);
+            totalPriceEl.textContent = formattedPrice;
+
+            // Time calculation
+            const totalDays = Math.ceil((pages * 0.8) + (features * 1.5)) + (chkExpress.checked ? 0 : 2);
+            estimatedTimeEl.textContent = `${Math.max(3, totalDays - 2)}-${totalDays} hari kerja`;
+        }
+
+        rangePages.addEventListener('input', updateCalculator);
+        rangeFeatures.addEventListener('input', updateCalculator);
+        chkSeo.addEventListener('change', updateCalculator);
+        chkExpress.addEventListener('change', updateCalculator);
+        updateCalculator();
+
+        function requestQuote() {
+            showToast('Menghubungkan ke layanan pesan WhatsApp...', 'info');
+        }
+
+        // --- 4. Portfolio Filter ---
+        function filterPortfolio(category) {
+            const items = document.querySelectorAll('.portfolio-item');
+            const btns = document.querySelectorAll('.filter-btn');
+
+            btns.forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white');
+                btn.classList.add('bg-white', 'dark:bg-slate-800', 'text-slate-700', 'dark:text-slate-300');
+            });
+
+            event.target.classList.remove('bg-white', 'dark:bg-slate-800', 'text-slate-700', 'dark:text-slate-300');
+            event.target.classList.add('bg-blue-600', 'text-white');
+
+            items.forEach(item => {
+                if (category === 'all' || item.classList.contains(category)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // --- 5. Testimonial Carousel ---
+        const testimonials = [
+            {
+                text: '"NexusTech membantu kami meluncurkan landing page produk hanya dalam waktu kurang dari 3 hari. Hasilnya sangat cepat dan mulus di Netlify!"',
+                author: 'Budi Santoso',
+                role: 'CEO di TechStart'
+            },
+            {
+                text: '"Desain interaktifnya memukau investor kami. Pengalaman pengguna yang dihadirkan benar-benar berkelas dunia."',
+                author: 'Siti Rahma',
+                role: 'Product Lead di Finovate'
+            },
+            {
+                text: '"Kalkulator estimasinya sangat praktis bagi calon klien kami untuk mengira-ngira besaran anggaran."',
+                author: 'Kevin Wijaya',
+                role: 'Founder & Creative Director'
+            }
+        ];
+
+        let currentTestiIndex = 0;
+
+        function updateTestimonial() {
+            const t = testimonials[currentTestiIndex];
+            document.getElementById('testi-text').textContent = t.text;
+            document.getElementById('testi-author').textContent = t.author;
+            document.getElementById('testi-role').textContent = t.role;
+            renderDots();
+        }
+
+        function renderDots() {
+            const dotsContainer = document.getElementById('testi-dots');
+            dotsContainer.innerHTML = '';
+            testimonials.forEach((_, idx) => {
+                const dot = document.createElement('div');
+                dot.className = `w-2.5 h-2.5 rounded-full transition-all cursor-pointer ${idx === currentTestiIndex ? 'bg-blue-600 w-6' : 'bg-slate-300 dark:bg-slate-600'}`;
+                dot.onclick = () => { currentTestiIndex = idx; updateTestimonial(); };
+                dotsContainer.appendChild(dot);
+            });
+        }
+
+        function prevTestimonial() {
+            currentTestiIndex = (currentTestiIndex - 1 + testimonials.length) % testimonials.length;
+            updateTestimonial();
+        }
+
+        function nextTestimonial() {
+            currentTestiIndex = (currentTestiIndex + 1) % testimonials.length;
+            updateTestimonial();
+        }
+
+        renderDots();
+
+        // --- 6. Form Handling & Toast Notifications ---
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            showToast('Pesan Anda berhasil terkirim! Tim kami akan menghubungi Anda segera.', 'success');
+            document.getElementById('contact-form').reset();
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            const bgColor = type === 'success' ? 'bg-emerald-600' : 'bg-blue-600';
+            const icon = type === 'success' ? 'fa-check-circle' : 'fa-info-circle';
+
+            toast.className = `${bgColor} text-white px-5 py-3.5 rounded-xl shadow-xl flex items-center gap-3 text-sm font-medium transition-all transform translate-y-2 opacity-0`;
+            toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${message}</span>`;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 50);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+    </script>
 </body>
 </html>
+```eof
+
+Saya telah membuat file kode website interaktif modern (`index.html`).
+
+### Cara Mengunggah ke Netlify (Gratis & Tanpa Build):
+1. **Simpan file**: Simpan kode di atas sebagai `index.html`.
+2. **Buka Netlify Drop**: Buka browser Anda dan kunjungi **[app.netlify.com/drop](https://app.netlify.com/drop)**.
+3. **Drag & Drop**: Tarik dan lepas (*drag and drop*) file `index.html` langsung ke kotak unggah Netlify.
+4. **Selesai**: Netlify akan langsung memberikan URL website publik yang bisa diakses secara online!
+
+Silakan beri tahu saya jika Anda ingin menambah fitur interaktif lain atau melakukan penyesuaian desain.
